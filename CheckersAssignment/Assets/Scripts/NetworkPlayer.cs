@@ -21,6 +21,8 @@ public class NetworkPlayer : MonoBehaviour
     private Transform leftHandRig;
     private Transform rightHandRig;
 
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -56,9 +58,6 @@ public class NetworkPlayer : MonoBehaviour
 
     void MapPosition(Transform target, Transform rigTransform)
     {
-        //InputDevices.GetDeviceAtXRNode(node).TryGetFeatureValue(CommonUsages.devicePosition, out Vector3 position);
-        //InputDevices.GetDeviceAtXRNode(node).TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion rotation);
-
         target.position = rigTransform.position;
         target.rotation = rigTransform.rotation;
     }

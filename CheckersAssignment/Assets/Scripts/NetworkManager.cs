@@ -6,6 +6,9 @@ using Photon.Realtime;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    public NetworkBoard networkBoard;
+
+    int playerCounter = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +36,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("Joined Room");
+        //Player Counter variable is not being taken by the server, only locally
+        if (playerCounter == 0)
+        {
+            networkBoard.GenerateBlackPieces();
+        }
+        else
+        {
+            networkBoard.GenerateRedPieces();
+        }
+        playerCounter++;
         base.OnJoinedRoom();
     }
 
