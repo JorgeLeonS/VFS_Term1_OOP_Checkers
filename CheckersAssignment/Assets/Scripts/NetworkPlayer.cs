@@ -21,8 +21,6 @@ public class NetworkPlayer : MonoBehaviour
     private Transform leftHandRig;
     private Transform rightHandRig;
 
-    
-
     // Start is called before the first frame update
     void Start()
     {

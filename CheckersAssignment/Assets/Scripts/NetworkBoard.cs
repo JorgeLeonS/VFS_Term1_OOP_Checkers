@@ -7,72 +7,136 @@ using Photon.Realtime;
 public class NetworkBoard : MonoBehaviourPunCallbacks
 {
     public NetworkPiece[,] pieces = new NetworkPiece[8, 8];
+    public BoardSection[,] sections = new BoardSection[8, 8];
     public GameObject redPiece;
     public GameObject blackPiece;
 
-    float RedsZPosition = 0.75f;
-    float RedsXPosition = 1.58f;
+    float initialXPosition = 1.58f;
+    float initialZPosition = 1.55f;
 
-    float BlacksZPosition = -0.75f;
-    float BlacksXPosition = -1.58f;
+    [PunRPC]
+    public void CreatePiece(BoardSection section, GameObject piece)
+    {
+        GameObject newPiece = Instantiate(piece, section.Location, transform.rotation);   
+        NetworkPiece p = newPiece.GetComponent<NetworkPiece>();
+        p.Position = section.Position;
+        bool isRed = piece.name == "NetworkRedPiece(Clone)";
+        p.Color = isRed ? "Red" : "Black";
+        section.isEmpty = false;
+        pieces[section.Position.Item1, section.Position.Item2] = p;
+    }
+    [PunRPC]
+    public void CreateBoardSections()
+    {
+        for (int z = 0; z < 8; z++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                sections[x, z] = new BoardSection
+                {
+                    Position = (x, z),
+                    Location = new Vector3(initialXPosition, 1.3f, initialZPosition),
+                    isEmpty = true
+                };
+                initialXPosition -= 0.44f;
+            }
+            initialXPosition = 1.58f;
+            initialZPosition -= 0.45f; 
+        }
+    }
 
+    [PunRPC]
     public void GenerateRedPieces()
     {
         for (int z = 0; z < 3; z++)
         {
-            bool oddOrEven = (z % 2 != 0);
-            for (int x = 0; x < 8; x+=2)
+            bool oddOrEven = (z % 2 == 0);
+            if (oddOrEven)
             {
-                AssignRedPiecesPosition(x, z);
-                RedsXPosition -= 0.88f;
+                for (int x = 0; x < 8; x += 2)
+                {
+                    CreatePiece(sections[x, z], redPiece);
+                }
             }
-            RedsXPosition = oddOrEven ? 1.58f : 1.13f;
-            RedsZPosition += 0.4f;
+            else
+            {
+                for (int x = 1; x < 8; x += 2)
+                {
+                    CreatePiece(sections[x, z], redPiece);
+                }
+            }
         }
     }
-
+    [PunRPC]
     public void GenerateBlackPieces()
     {
-        for (int z = 0; z < 3; z++)
+        for (int z = 7; z > 4; z--)
         {
-            bool oddOrEven = (z % 2 != 0);
-            for (int x = 0; x < 8; x += 2)
+            bool oddOrEven = (z % 2 == 0);
+            if (oddOrEven)
             {
-                AssignBlackPiecesPosition(x, z);
-                BlacksXPosition -= 0.88f;
+                for (int x = 0; x < 8; x += 2)
+                {
+                    CreatePiece(sections[x, z], blackPiece);
+                }
             }
-            BlacksXPosition = oddOrEven ? 1.58f : 1.13f;
-            BlacksZPosition += 0.4f;
+            else
+            {
+                for (int x = 1; x < 8; x += 2)
+                {
+                    CreatePiece(sections[x, z], blackPiece);
+                }
+            }
         }
-    }
-
-    private void AssignRedPiecesPosition(int x, int z)
-    {
-        GameObject newPiece = PhotonNetwork.Instantiate("NetworkRedPiece", new Vector3(RedsXPosition, 1.3f, RedsZPosition), transform.rotation);
-        //GameObject newPiece = Instantiate(redPiece, new Vector3(RedsXPosition, 1.3f, RedsZPosition), transform.rotation);
-        //newPiece.transform.SetParent(transform);
-        NetworkPiece p = newPiece.GetComponent<NetworkPiece>();
-        pieces[x, z] = p;
-    }
-
-    private void AssignBlackPiecesPosition(int x, int z)
-    {
-        GameObject newPiece = PhotonNetwork.Instantiate("NetworkBlackPiece", new Vector3(RedsXPosition, 1.3f, RedsZPosition), transform.rotation);
-        //GameObject newPiece = Instantiate(redPiece, new Vector3(RedsXPosition, 1.3f, RedsZPosition), transform.rotation);
-        //newPiece.transform.SetParent(transform);
-        NetworkPiece p = newPiece.GetComponent<NetworkPiece>();
-        pieces[x, z] = p;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        //GenerateBoard();
+        //CreateBoardSections();
+        //GenerateRedPieces();
+        //GenerateBlackPieces();
+        
+        //int pieceCount = 0;
+
+        //for (int i = 0; i < 8; i++)
+        //{
+        //    for (int j = 0; j < 8; j++)
+        //    {
+        //        if (pieces[i, j] != null)
+        //        {
+        //            if(pieces[i,j].name == "NetworkRedPiece(Clone)")
+        //            {
+        //                Debug.Log("Red piece on "+ i + " - " + j);
+        //            }else if(pieces[i, j].name == "NetworkBlackPiece(Clone)")
+        //            {
+        //                Debug.Log("Black piece on " + i + " - " + j);
+        //            }
+        //        }
+        //    }
+        //}
+
+        //foreach (var piece in pieces)
+        //{
+        //    if (piece != null)
+        //    {
+        //        pieceCount++;
+        //        Debug.Log(piece.name + " position: " + piece.transform.position +
+        //            " X: " + piece.xPosition + ", Z: " + piece.zPosition);
+        //    }
+        //}
+        //Debug.Log(pieceCount);
+
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    private void UpdateMouseOver()
+    {
+
     }
 }

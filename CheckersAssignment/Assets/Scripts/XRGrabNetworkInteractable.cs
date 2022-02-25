@@ -19,9 +19,17 @@ public class XRGrabNetworkInteractable : XRGrabInteractable
         
     }
 
+    protected override void OnHoverEntered(XRBaseInteractor interactor)
+    {
+        Debug.Log("Player hovered");
+        base.OnHoverEntered(interactor);
+    }
+
     protected override void OnSelectEntered(XRBaseInteractor interactor)
     {
         Debug.Log("Player Grabbed:" + " int: " + interactor + " GO: " + gameObject);
+        gameObject.GetComponent<NetworkPiece>().CheckValidPlacement();
+        //gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
         photonView.RequestOwnership();
         base.OnSelectEntered(interactor);
     }
