@@ -9,6 +9,11 @@ public class NetworkPiece : XRGrabInteractable
     public string Color { get; set; }
     public bool isCrowned = false;
 
+    public void SetToPosition()
+    {
+        //gameObject.transform.position
+    }
+
     public bool CheckValidPlacement()
     {
         List<int> validPositions;
