@@ -14,13 +14,42 @@ public class NetworkBoard : MonoBehaviourPunCallbacks
     float initialXPosition = 1.58f;
     float initialZPosition = 1.55f;
 
+    public GameObject TeleportPoint;
+
+    private float oldDistance = 9999;
+
+    private void CheckNearestObject(GameObject teleportPoint)
+    {
+        float dist = Vector3.Distance(gameObject.transform.position, teleportPoint.transform.position);
+        if (dist < oldDistance)
+        {
+            //closetsObject = teleportPoint;
+            oldDistance = dist;
+        }
+    }
+
+    public void DisplayValidMovement(List<(int, int)> validPositions)
+    {
+        foreach (var valid in validPositions)
+        {
+            Vector3 location = sections[valid.Item1, valid.Item2].Location;
+            (int, int) position = sections[valid.Item1, valid.Item2].Position;
+            GameObject newTeleportPoint = Instantiate(TeleportPoint, location, transform.rotation);
+            TeleportPoint tP = newTeleportPoint.GetComponent<TeleportPoint>();
+            tP.Position = position;
+            tP.Location = location;
+            tP.transform.position = tP.transform.position + new Vector3(0, -0.1f, 0);
+            tP.transform.Rotate(-90, 0, 0);
+        }
+    }
+
     [PunRPC]
     public void CreatePiece(BoardSection section, GameObject piece)
     {
-        GameObject newPiece = Instantiate(piece, section.Location, transform.rotation);   
+        GameObject newPiece = Instantiate(piece, section.Location, transform.rotation);
         NetworkPiece p = newPiece.GetComponent<NetworkPiece>();
         p.Position = section.Position;
-        bool isRed = piece.name == "NetworkRedPiece(Clone)";
+        bool isRed = piece.name == "NetworkRedPiece";
         p.Color = isRed ? "Red" : "Black";
         section.isEmpty = false;
         pieces[section.Position.Item1, section.Position.Item2] = p;
@@ -41,7 +70,7 @@ public class NetworkBoard : MonoBehaviourPunCallbacks
                 initialXPosition -= 0.44f;
             }
             initialXPosition = 1.58f;
-            initialZPosition -= 0.45f; 
+            initialZPosition -= 0.45f;
         }
     }
 
@@ -96,7 +125,7 @@ public class NetworkBoard : MonoBehaviourPunCallbacks
         //CreateBoardSections();
         //GenerateRedPieces();
         //GenerateBlackPieces();
-        
+
         //int pieceCount = 0;
 
         //for (int i = 0; i < 8; i++)
@@ -132,7 +161,7 @@ public class NetworkBoard : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void UpdateMouseOver()

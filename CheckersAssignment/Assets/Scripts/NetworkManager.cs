@@ -38,14 +38,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("Joined Room");
         //Player Counter variable is not being taken by the server, only locally
         networkBoard.CreateBoardSections();
-        if (playerCounter == 0)
-        {
+        //if (playerCounter == 0)
+        //{
             networkBoard.GenerateRedPieces();
-        }
-        else
-        {
+        //}
+        //else
+        //{
             networkBoard.GenerateBlackPieces();
-        }
+        //}
         playerCounter++;
         base.OnJoinedRoom();
     }
