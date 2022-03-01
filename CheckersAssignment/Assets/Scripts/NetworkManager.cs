@@ -55,4 +55,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("New player joined the room");
         base.OnPlayerEnteredRoom(newPlayer);
     }
+
+    public static void DeleteAllObjectsWithTag(string tag)
+    {
+        GameObject[] placeHolderPieces;
+        placeHolderPieces = GameObject.FindGameObjectsWithTag(tag);
+        foreach (var item in placeHolderPieces)
+        {
+            Destroy(item);
+        }
+    }
+
+
 }

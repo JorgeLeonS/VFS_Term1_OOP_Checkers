@@ -23,20 +23,24 @@ public class XRGrabNetworkInteractable : XRGrabInteractable
         }
     }
 
-    protected override void OnHoverEntered(XRBaseInteractor interactor)
-    {
-        //Debug.Log("Player hovered");
-        base.OnHoverEntered(interactor);
-    }
 
+    //protected override void OnSelectExited(SelectExitEventArgs args)
+    //{
+    //    Debug.Log("args.interactableObject.coll " + args.interactableObject.colliders.);
+    //    //.GetComponent<NetworkPiece>().MovePiece();
+    //    NetworkManager.DeleteAllObjectsWithTag("TeleportPoint");
+    //    NetworkManager.DeleteAllObjectsWithTag("PlaceHolderPiece");
+
+    //    isBeingGrabbed = false;
+
+    //    base.OnSelectExited(args);
+    //}
     protected override void OnSelectExited(XRBaseInteractor interactor)
     {
-        GameObject[] teleportPoints;
-        teleportPoints = GameObject.FindGameObjectsWithTag("TeleportPoint");
-        foreach (var item in teleportPoints)
-        {
-            Destroy(item);
-        }
+        gameObject.GetComponent<NetworkPiece>().MovePiece();
+        NetworkManager.DeleteAllObjectsWithTag("TeleportPoint");
+        NetworkManager.DeleteAllObjectsWithTag("PlaceHolderPiece");
+
         isBeingGrabbed = false;
         base.OnSelectExited(interactor);
     }

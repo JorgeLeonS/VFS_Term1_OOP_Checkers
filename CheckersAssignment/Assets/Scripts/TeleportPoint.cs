@@ -27,12 +27,7 @@ public class TeleportPoint : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        GameObject[] placeHolderPieces;
-        placeHolderPieces = GameObject.FindGameObjectsWithTag("PlaceHolderPiece");
-        foreach (var item in placeHolderPieces)
-        {
-            Destroy(item);
-        }
+        NetworkManager.DeleteAllObjectsWithTag("PlaceHolderPiece");
     }
 
     // Start is called before the first frame update
