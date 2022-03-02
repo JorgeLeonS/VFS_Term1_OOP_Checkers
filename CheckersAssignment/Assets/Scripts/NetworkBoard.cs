@@ -6,7 +6,6 @@ using Photon.Realtime;
 
 public class NetworkBoard : MonoBehaviourPunCallbacks
 {
-    public NetworkPiece[,] pieces = new NetworkPiece[8, 8];
     public BoardSection[,] sections = new BoardSection[8, 8];
     public GameObject redPiece;
     public GameObject blackPiece;
@@ -15,18 +14,6 @@ public class NetworkBoard : MonoBehaviourPunCallbacks
     float initialZPosition = 1.55f;
 
     public GameObject TeleportPoint;
-
-    private float oldDistance = 9999;
-
-    private void CheckNearestObject(GameObject teleportPoint)
-    {
-        float dist = Vector3.Distance(gameObject.transform.position, teleportPoint.transform.position);
-        if (dist < oldDistance)
-        {
-            //closetsObject = teleportPoint;
-            oldDistance = dist;
-        }
-    }
 
     public void DisplayValidMovement(List<(int, int)> validPositions)
     {
@@ -50,9 +37,9 @@ public class NetworkBoard : MonoBehaviourPunCallbacks
         NetworkPiece p = newPiece.GetComponent<NetworkPiece>();
         p.Position = section.Position;
         bool isRed = piece.name == "NetworkRedPiece";
-        p.Color = isRed ? "Red" : "Black";
+        p.PieceColor = isRed ? "Red" : "Black";
         section.isEmpty = false;
-        pieces[section.Position.Item1, section.Position.Item2] = p;
+        sections[section.Position.Item1, section.Position.Item2].piece = p;
     }
     [PunRPC]
     public void CreateBoardSections()

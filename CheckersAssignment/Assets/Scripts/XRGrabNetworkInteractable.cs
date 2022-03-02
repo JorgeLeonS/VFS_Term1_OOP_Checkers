@@ -49,7 +49,7 @@ public class XRGrabNetworkInteractable : XRGrabInteractable
     {
         Debug.Log("Player Grabbed:" + " int: " + interactor + " GO: " + gameObject);
         gameObject.GetComponent<NetworkPiece>().CheckValidPlacement();
-        //gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+        //gameObject.GetComponent<MeshRenderer>().material.color = Color.magenta;
         photonView.RequestOwnership();
         isBeingGrabbed = true;
         base.OnSelectEntered(interactor);
