@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 896674207354699490}
   m_Layer: 0
   m_Name: NetworkRedPiece
-  m_TagString: Untagged
+  m_TagString: RedPiece
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

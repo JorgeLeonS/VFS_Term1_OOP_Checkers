@@ -23,18 +23,6 @@ public class XRGrabNetworkInteractable : XRGrabInteractable
         }
     }
 
-
-    //protected override void OnSelectExited(SelectExitEventArgs args)
-    //{
-    //    Debug.Log("args.interactableObject.coll " + args.interactableObject.colliders.);
-    //    //.GetComponent<NetworkPiece>().MovePiece();
-    //    NetworkManager.DeleteAllObjectsWithTag("TeleportPoint");
-    //    NetworkManager.DeleteAllObjectsWithTag("PlaceHolderPiece");
-
-    //    isBeingGrabbed = false;
-
-    //    base.OnSelectExited(args);
-    //}
     protected override void OnSelectExited(XRBaseInteractor interactor)
     {
         gameObject.GetComponent<NetworkPiece>().MovePiece();

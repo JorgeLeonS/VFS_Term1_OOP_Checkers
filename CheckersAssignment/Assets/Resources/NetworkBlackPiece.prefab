@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: -6789816640412256529}
   m_Layer: 0
   m_Name: NetworkBlackPiece
-  m_TagString: Untagged
+  m_TagString: BlackPiece
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

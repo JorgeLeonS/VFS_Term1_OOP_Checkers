@@ -14,6 +14,8 @@ public class NetworkPiece : XRGrabInteractable
 
     List<(int, int)> eatablePieces;
 
+    bool isRedsTurn = true;
+
     public bool CheckValidPlacement()
     {
         int PositiveX = Position.Item1 + 1;
@@ -68,10 +70,19 @@ public class NetworkPiece : XRGrabInteractable
         {
             (int, int) validPos = (validPositions[i].Item1, validPositions[i].Item2);
             //Debug.Log("Removing piece in " + validPos.Item1 + "," + validPos.Item2);
-            if (!FindObjectOfType<NetworkBoard>().sections[validPos.Item1, validPos.Item2].isEmpty)
+            try
             {
-                validPositions.Remove(validPos);
+                if (!FindObjectOfType<NetworkBoard>().sections[validPos.Item1, validPos.Item2].isEmpty
+                && PieceColor == FindObjectOfType<NetworkBoard>().sections[validPos.Item1, validPos.Item2].piece.PieceColor)
+                {
+                    validPositions.Remove(validPos);
+                }
             }
+            catch (System.Exception)
+            {
+                continue;
+            }
+            
         }
 
         // Add new positions if the piece can eat
@@ -111,8 +122,9 @@ public class NetworkPiece : XRGrabInteractable
                     nextZ = (nextZ > 0) ? validPos.Item2 + 1 : validPos.Item2 - 1;
 
                     if (nextX > 7 || nextX < 0 || nextZ > 7 || nextZ < 0
-                        || !FindObjectOfType<NetworkBoard>().sections[validPos.Item1, validPos.Item2].isEmpty)
+                        || !FindObjectOfType<NetworkBoard>().sections[nextX, nextZ].isEmpty)
                     {
+                        validPositions.Remove(validPos);
                         continue;
                     }
                     else
@@ -158,6 +170,23 @@ public class NetworkPiece : XRGrabInteractable
         else
         {
             (int, int) positionToMove = currentCollision.GetComponent<TeleportPoint>().Position;
+
+            int nextX = positionToMove.Item1 - Position.Item1;
+            int nextZ = positionToMove.Item2 - Position.Item2;
+
+            if (nextX > 1) nextX = positionToMove.Item1 - 1;
+            else if (nextX < -1) nextX = positionToMove.Item1 + 1;
+
+            if (nextZ > 1) nextZ = positionToMove.Item2 - 1;
+            if (nextZ < -1) nextZ = positionToMove.Item2 + 1;
+
+            if(eatablePieces.Count > 0 && eatablePieces.Contains((nextX, nextZ)))
+            {
+                Destroy(FindObjectOfType<NetworkBoard>().sections[nextX, nextZ].piece.gameObject);
+                FindObjectOfType<NetworkBoard>().sections[nextX, nextZ].isEmpty = true;
+                FindObjectOfType<NetworkBoard>().sections[nextX, nextZ].piece = null;
+            }
+
             //Debug.Log("Piece in array: " + FindObjectOfType<NetworkBoard>().pieces[Position.Item1, Position.Item2]);
 
             FindObjectOfType<NetworkBoard>().sections[Position.Item1, Position.Item2].isEmpty = true;
@@ -170,34 +199,6 @@ public class NetworkPiece : XRGrabInteractable
             gameObject.transform.position = FindObjectOfType<NetworkBoard>().sections[Position.Item1, Position.Item2].Location;
             gameObject.transform.rotation = Quaternion.identity;
 
-            //try
-            //{
-            //    if (Color != FindObjectOfType<NetworkBoard>().sections[positionToMove.Item1, positionToMove.Item2].piece.Color)
-            //    {
-            //        int nextX = positionToMove.Item1 - Position.Item1;
-            //        int nextZ = positionToMove.Item2 - Position.Item2;
-
-            //        nextX = (nextX > 0) ? positionToMove.Item1 + 1 : positionToMove.Item1 - 1;
-            //        nextZ = (nextZ > 0) ? positionToMove.Item2 + 1 : positionToMove.Item2 - 1;
-
-            //        if (nextX > 7 || nextX < 0 || nextZ > 7 || nextZ < 0
-            //            || !FindObjectOfType<NetworkBoard>().sections[positionToMove.Item1, positionToMove.Item2].isEmpty)
-            //        {
-            //            // Do nothing
-            //        }
-            //        else
-            //        {
-            //            FindObjectOfType<NetworkBoard>().sections[positionToMove.Item1, positionToMove.Item2].isEmpty = true;
-            //            FindObjectOfType<NetworkBoard>().sections[positionToMove.Item1, positionToMove.Item2].piece = null;
-            //            Destroy(FindObjectOfType<NetworkBoard>().sections[positionToMove.Item1, positionToMove.Item2].piece.gameObject);
-            //        }
-            //    }
-            //}
-            //catch (System.Exception)
-            //{
-            //    throw;
-            //}
-
             // Crown Pieces
             if (Position.Item2 == 7 && PieceColor == "Red")
             {
@@ -209,8 +210,5 @@ public class NetworkPiece : XRGrabInteractable
                 isCrowned = true;
             }
         }
-        //Debug.Log("Piece NewPos in array: " + FindObjectOfType<NetworkBoard>().pieces[Position.Item1, Position.Item2].Position);
-
-        //FindObjectOfType<NetworkBoard>().sections[positionToMove.Item1, positionToMove.Item2]
     }
 }
